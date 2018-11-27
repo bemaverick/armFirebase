@@ -7,43 +7,68 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import { View } from 'react-native';
+import firebase from 'react-native-firebase';
+import { createStackNavigator, createNavigationContainer } from 'react-navigation';
+import Home from './src/containers/Home';
+import AddingChampion from './src/containers/AddingChampion';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
+
+const MainNavigator = createStackNavigator({
+  Home: {
+    screen: Home,
+  },
+  AddingChampion: {
+    screen: AddingChampion,
+    navigationOptions: ({ navigation }) => ({
+      title: "AddingChampion",
+    }),
+  },
+}, {
+  defaultNavigationOptions: {
+    header: null,
+    // headerStyle: {
+    //   backgroundColor: "#600",
+    // },
+    headerTitleStyle: {
+      color: "#fff"
+    }
+  }
+
 });
+
+
+
+const AppNavigator = createNavigationContainer(MainNavigator);
+
+const config = {
+  apiKey: "AIzaSyCWB4BMveCqZsvc8n2FjEGV6diNDCC7vtg",
+  authDomain: "armfirebase.firebaseapp.com",
+  databaseURL: "https://armfirebase.firebaseio.com",
+  projectId: "armfirebase",
+  storageBucket: "armfirebase.appspot.com",
+  messagingSenderId: "982619270313"
+};
+
+const rootRef = firebase.database().ref();
+const user = rootRef.child('Users');
+
+
 
 type Props = {};
 export default class App extends Component<Props> {
+  componentDidMount() {
+    // console.log(firebase.database().getServerTime())
+    firebase.initializeApp(config);
+
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+      <View style={{flex: 1, backgroundColor: 'white'}}>
+        <AppNavigator />
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
